@@ -30,6 +30,7 @@ def run_evaluation():
     shaping_rewards = []
     real_rewards = []
     fruits_captured = []
+    steps_list = []
     wall_deaths = 0
     self_deaths = 0
     wins = 0
@@ -41,6 +42,7 @@ def run_evaluation():
         ep_shaping_rew = 0
         ep_real_rew = 0
         ep_fruits = 0
+        ep_steps = 0
         
         while not (done or truncated):
             action, _ = model.predict(obs, deterministic=True)
@@ -67,23 +69,26 @@ def run_evaluation():
                     timeouts += 1
                 else:
                     ep_real_rew += REAL_STEP
+            ep_steps += 1
         
         shaping_rewards.append(ep_shaping_rew)
         real_rewards.append(ep_real_rew)
         fruits_captured.append(ep_fruits)
+        steps_list.append(ep_steps)
 
     print("="*50)
     print(f"{'DQN AGENT FINAL EVALUATION':^50}")
     print("="*50)
-    print(f"Episodes:               {n_episodes}")
+    print(f"Episodes:                {n_episodes}")
     print(f"Mean Reward (Shaping):  {np.mean(shaping_rewards):.2f}")
     print(f"Mean Reward (Real):     {np.mean(real_rewards):.2f}")
     print(f"Mean Fruits:            {np.mean(fruits_captured):.2f}")
+    print(f"Mean Steps/Episode:     {np.mean(steps_list):.1f}")
     print("-" *50)
-    print(f"Win Rate:               {(wins/n_episodes)*100:>6.1f}%")
-    print(f"Wall Death Rate:        {(wall_deaths/n_episodes)*100:>6.1f}%")
-    print(f"Self-Eat Rate:          {(self_deaths/n_episodes)*100:>6.1f}%")
-    print(f"Timeout Rate:           {(timeouts/n_episodes)*100:>6.1f}%")
+    print(f"Win Rate:                {(wins/n_episodes)*100:>6.1f}%")
+    print(f"Wall Death Rate:         {(wall_deaths/n_episodes)*100:>6.1f}%")
+    print(f"Self-Eat Rate:           {(self_deaths/n_episodes)*100:>6.1f}%")
+    print(f"Timeout Rate:            {(timeouts/n_episodes)*100:>6.1f}%")
     print("="*50)
 
 if __name__ == "__main__":
